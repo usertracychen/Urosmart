@@ -7,6 +7,16 @@
   <a href="https://github.com/usertracychen/Portfolio/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/usertracychen/Portfolio?style=social"></a>
 </p>
 
+
+## 📑 目錄
+
+- [動機與目的](motivation)
+- [材料](材料)
+- [系統架構](系統架構)
+- [資料庫規劃](資料庫規劃)
+- [結果展示](結果展示)
+- [專案結構](專案結構)
+
 ## 動機：
 1.	難以及時判斷異常排尿情況
 2.	滿袋或洩漏時的緊急風險
@@ -47,35 +57,11 @@
 
 ## 結果展示：
 
-# 📂 Project&nbsp;Title
-
-> 一句話描述你的專案宗旨與價值主張
-
-![banner placeholder](docs/banner.png)
 
 
 
----
 
-## 📑 目錄
 
-- [背景](#背景)
-- [功能特色](#功能特色)
-- [快速開始](#快速開始)
-- [使用說明](#使用說明)
-- [技術棧與工具](#技術棧與工具)
-- [專案結構](#專案結構)
-- [畫面截圖](#畫面截圖)
-- [Roadmap](#roadmap)
-- [貢獻指南](#貢獻指南)
-- [授權](#授權)
-- [聯絡方式](#聯絡方式)
-
----
-
-## 背景
-
-在這段簡要描述專案的緣起、解決的痛點，以及使用情境。
 
 ## 功能特色
 
