@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      h2 {
+        
+          text-align: center;
+          margin: 40px 0;
+          color: #4BBDA6;
+          font-weight: bold;
+      }
+    
+        .footer {
+            background-color: #4BBDA6;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 50px;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+          text-decoration: underline;
+        }
+        .message {
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+      {%block style%}{%endblock%}
+       
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+          <div class="container">
+              <a class="navbar-brand" href="{%url 'home'%}">
+                  <h1 style="color:#4BBDA6; font-weight:bold;">UroSmart</h1>
+              </a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarContent">
+                  <ul class="navbar-nav ml-auto">
+                      <li class="nav-item ">
+                          <a class="nav-link" href="{% url 'home' %}">首頁</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="{%url 'weight_display_dashboard'%}">儀錶板</a> 
+                      </li>
+                      {% if role == 'nurse'%}
+                      <li class="nav-item dropdown">
+                          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">病患列表</a>
+                          <div class="dropdown-menu">
+                              <a class="dropdown-item" href="{%url 'weight_display'%}">全部病患</a>
+                              <a class="dropdown-item" href="{%url 'weight_display_nurse'%}">我的病患</a>
+                          </div>
+                      </li>
+                      {% endif%}
+                      <li class="nav-item">
+                          <a class="nav-link" href="{%url 'show_history'%}">歷史紀錄</a>
+                      </li>
+                      <li class="nav-item dropdown">
+                          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">住出院管理</a>
+                          <div class="dropdown-menu">
+                              <a class="dropdown-item" href="{%url 'lp_current_list'%}">目前住院列表</a>
+                              <a class="dropdown-item" href="{%url 'lp_history_list'%}">歷史入住紀錄</a>
+                          </div>
+                      </li>
+                      {% if role == 'admin'%}
+                      <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">設定</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{%url 'user_list'%}">帳號管理</a>
+                            <a class="dropdown-item" href="{%url 'device_list'%}">設備管理</a>
+                            <a class="dropdown-item" href="{%url 'roomconfig_list'%}">病房管理</a>
+                        </div>
+                      </li>
+                      {% endif %}
+                       <!-- 使用者名稱 -->
+                    <li class="nav-item active">
+                        <span class="nav-link">您好，{{ username }}</span>
+                    </li>
+                    <!-- 登出按鈕 -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">登出</a>
+                    </li>
+                  </ul>
+                  {% comment %} <form class="form-inline ml-3">
+                      <input class="form-control" type="search" placeholder="搜尋">
+                      <button class="btn btn-outline-success ml-2" type="submit">搜尋</button>
+                  </form> {% endcomment %}
+              </div>
+          </div>
+      </nav>
+      {%block content%}{%endblock%}
+      <!-- Footer -->
+    <div class="footer mt-auto py-3  text-white text-center">
+        &copy; 2025 UroSmart - All Rights Reserved. | 
+        <a href="{% url 'privacy' %}">隱私政策</a> | 
+        <a href="{% url 'terms' %}">使用條款</a> | 
+        <a href="{% url 'contact_us' %}">聯絡我們</a>
+    </div>
+        
+   
+
+
+   
+</body>
+</html>

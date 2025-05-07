@@ -1,0 +1,54 @@
+{% extends "base_afterlogin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>病患住出院歷史列表</h2>
+    <form method="GET" class="mb-4">
+        <div class=" form-row " >
+            <div class="col-4 ">
+                <label for="patient_id" class="form-label  font-weight-bold " >病患病歷號</label>
+                <input type="text"class="form-control" placeholder="搜尋病患..." name="patient_id",id="patient_id"value="{{search_params.patient_id|default_if_none:''}}"></input>
+            </div>
+            <div class="col-3">
+                <label for="admit_date" class="form-label font-weight-bold">入院時間(之後的資料)</label>
+                <input type="date" class="form-control" name="admit_date" id="admit_date" value="{{search_params.admit_date}}"></input>
+            </div>
+            <div class="col-3">
+                <label for="discharged_date" class="form-label font-weight-bold">出院時間(以前的資料)</label>
+                <input type="date" class="form-control" name="discharged_date" id="discharged_date" value="{{search_params.discharged_date}}"></input>
+            </div>
+            <div class="col-2 d-flex align-items-end ">
+                <button type="submit" class="btn btn-primary w-100">查詢</button>
+            </div>
+        </div>
+    </form>
+    
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>病房</th>
+                <th>病歷號</th>
+                <th>病患名稱</th>
+                <th>身分證</th>
+                <th>入院時間</th>
+                <th>出院時間</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in history_records %}
+            <tr>
+                <td>{{ record.location }}</td>
+                <td>{{ record.patient.patient_id }}</td>
+                <td>{{ record.patient.name }}</td>
+                <td>{{ record.patient.identity_card }}</td>
+                <td>{{ record.start_date }}</td>
+                <td>{{ record.end_date|default:"目前仍在住院" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">尚無歷史紀錄</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

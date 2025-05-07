@@ -1,0 +1,96 @@
+{% extends "base_afterlogin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>我的病患即時尿量列表</h2>
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>病房</th>
+                <th>病患姓名</th>
+                <th>病患ID</th>
+                <th>當下尿量</th>
+                <th>累積尿量</th>
+                <th>狀態</th>
+                <th>更新時間</th>
+                <th>操作</th>
+                
+            </tr>
+        </thead>
+        <tbody id="device-tbody">
+            {% for dev in devices_data %}
+            <tr>
+                <td>{{ dev.device_location }}</td>
+                <td>{{ dev.patient_name }}</td>
+                <td>{{ dev.patient_id }}</td>
+                <td>{{ dev.current_volume }}</td>
+                <td>{{ dev.sum_volume }}</td>
+                <td>{{ dev.status }}</td>
+                <td>{{dev.timestamp|default_if_none:""}}</td> <!--|date:"Y-m-d H:i"-->
+                <td>
+                    <!-- 刪除該筆裝置 -->
+                    <a href="{% url 'weight_display_nurse_delete' dev.chip_id %}" 
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('確定要移除此裝置資料嗎？');">
+                       刪除
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">目前沒有已勾選的資料</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    (function () {
+      const REFRESH_MS = 10_000;                            // 10 秒
+      const API        = "{% url 'weight_display_nurse_api' %}";
+    
+      /** 把一筆 JSON 轉成 <tr> HTML 字串 */
+      function makeRow(d){
+        return `
+          <tr>
+            <td>${d.device_location}</td>
+            <td>${d.patient_name}</td>
+            <td>${d.patient_id}</td>
+            <td>${d.current_volume}</td>
+            <td>${d.sum_volume}</td>
+            <td>${d.status}</td>
+            <td>${d.timestamp || ""}</td>
+            <td>
+              <a href="${d.delete_url}"
+                 class="btn btn-danger btn-sm"
+                 onclick="return confirm('確定要移除此裝置資料嗎？');">
+                 刪除
+              </a>
+            </td>
+          </tr>`;
+      }
+    
+      /** 抓最新 JSON → 更新 <tbody> */
+      async function refreshTable(){
+        try{
+          const resp = await fetch(API + "?t=" + Date.now());  // 防快取
+          if(!resp.ok) throw new Error(resp.statusText);
+    
+          const data = await resp.json();
+          const html = data.devices.length
+                       ? data.devices.map(makeRow).join("")
+                       : `<tr><td colspan="8" class="text-center text-muted">
+                            目前沒有已勾選的資料
+                          </td></tr>`;
+    
+          document.getElementById("device-tbody").innerHTML = html;
+        }catch(err){
+          console.error("nurse list 更新失敗：", err);
+        }
+      }
+    
+      refreshTable();                  // 頁面載入立刻跑一次
+      setInterval(refreshTable, REFRESH_MS);
+    })();
+    </script>
+    
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends "base_afterlogin.html" %}
+{% block style %}
+.room-card {
+    border-radius: 0.75rem; /* 稍微加大卡片圓角 */
+}
+.room-card .card-header {
+    font-weight: 600; /* 加粗標題文字 */
+    font-size: 1.1rem;
+}
+{% comment %} .room-card .card-footer {
+    background-color: #f8f9fa; /* 讓 footer 與 card body 區分 */ 
+} {% endcomment %}
+.room-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+}
+{% endblock %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">病房資訊儀表板</h2>
+    
+    <!-- 狀態統計卡片區塊 -->
+    <div class="row mb-4">
+        <!-- 狀態正常 -->
+        <div class="col-md-6">
+            <div class="card text-center border-primary">
+                <div class="card-header  text-primary font-weight-bold " style="background-color:white">  <!---style="background-color: rgba(23, 109, 238, 0.56)"-->
+                    狀態正常
+                </div>
+                <div class="card-body">
+                    <h3 id="normal-count">{{ normal_count }}</h3>
+                    <p>位病患</p>
+                </div>
+            </div>
+        </div>
+        <!-- 狀態警示 -->
+        <div class="col-md-6">
+            <div class="card text-center border-danger">
+                <div class="card-header  text-danger font-weight-bold" style="background-color:white"> <!--style="background-color: rgba(241, 59, 35, 0.83)"-->
+                    狀態警示
+                </div>
+                <div class="card-body">
+                    <h3 id="warning-count">{{ warning_count }}</h3>
+                    <p>位病患</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 病房資訊卡片區塊 -->
+    <div class="row" id="cards-container">
+        {% for card in cards %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card h-100  room-card">
+                <!-- 根據是否有資料決定 header 顏色 -->
+                {% if card.has_data %}
+                    <div class="card-header  text-white" style="background-color: #4BBDA6;">
+                        房間：{{ card.room_number }}
+                    </div>
+                {% else %}
+                    <div class="card-header bg-secondary text-white">
+                        房間：{{ card.room_number }}
+                    </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    {% if card.has_data %}
+                        <h5 class="card-title">裝置：{{ card.chip_id }}</h5>
+                        <ul class="list-unstyled flex-grow-1">
+                            <li><strong>病患：</strong>{{ card.patient_name }} ({{ card.patient_id }})</li>
+                            <li><strong>當前數值：</strong>{{ card.current_value }}</li>
+                            <li>
+                                <strong>狀態：</strong>
+                                {% if card.status == "正常" %}
+                                    <span class="badge bg-success text-white" style="font-size:20px">{{ card.status }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger text-white" style="font-size:20px">{{ card.status }}</span>
+                                {% endif %}
+                            </li>
+                            {% if card.timestamp %}
+                                <li><strong>更新時間：</strong>{{ card.timestamp|date:"Y-m-d H:i" }}</li>
+                            {% endif %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted flex-grow-1 mb-0">無資料</p>
+                    {% endif %}
+                </div>
+                {% if card.has_data %}
+                <!-- Card Footer -->
+                <div class="card-footer ">
+                    <a href="{% url 'room_detail' card.room_number card.patient_id %}" class="btn btn-sm">
+                        詳細資訊
+                    </a>
+                </div>
+                {% else %}
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-secondary" disabled>
+                      無資料
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">目前沒有房間資訊</p>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    (function () {
+      const REFRESH_MS = 10_000;                      // 更新間隔
+      const API        = "{% url 'weight_display_dashboard_api' %}";
+    
+      /** 把一筆 card 物件轉成 HTML（與伺服器初始 render 的結構一致） */
+      function makeCard(c){
+        // ---- 卡片標頭 ----
+        const header = c.has_data
+          ? `<div class="card-header text-white" style="background-color:#4BBDA6;">
+               房間：${c.room_number}
+             </div>`
+          : `<div class="card-header bg-secondary text-white">
+               房間：${c.room_number}
+             </div>`;
+    
+        // ---- 卡片 body ----
+        let body, footer;
+        if (c.has_data){
+          const badge = c.status === "正常"
+            ? '<span class="badge bg-success text-white" style="font-size:20px">正常</span>'
+            : '<span class="badge bg-danger  text-white" style="font-size:20px">警示</span>';
+    
+          body = `
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">裝置：${c.chip_id}</h5>
+              <ul class="list-unstyled flex-grow-1">
+                <li><strong>病患：</strong>${c.patient_name} (${c.patient_id})</li>
+                <li><strong>當前數值：</strong>${c.current_value}</li>
+                <li><strong>狀態：</strong>${badge}</li>
+                <li><strong>更新時間：</strong>${c.timestamp}</li>
+              </ul>
+            </div>`;
+    
+          footer = `
+            <div class="card-footer">
+              <a href="${c.detail_url}" class="btn btn-sm">詳細資訊</a>
+            </div>`;
+        }else{
+          body = `
+            <div class="card-body d-flex flex-column">
+              <p class="text-muted flex-grow-1 mb-0">無資料</p>
+            </div>`;
+          footer = `
+            <div class="card-footer">
+              <button class="btn btn-sm btn-secondary" disabled>無資料</button>
+            </div>`;
+        }
+    
+        // ---- 包成整張卡片 ----
+        return `
+          <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card h-100 room-card">
+              ${header}
+              ${body}
+              ${footer}
+            </div>
+          </div>`;
+      }
+    
+      /** 抓 API → 更新統計 + 卡片 */
+      async function refreshBoard(){
+        try{
+          const res = await fetch(API + "?t=" + Date.now());
+          if(!res.ok) throw new Error(res.statusText);
+          const data = await res.json();
+    
+          // 更新統計數字
+          document.getElementById("normal-count").textContent  = data.normal;
+          document.getElementById("warning-count").textContent = data.warning;
+    
+          // 更新卡片列表
+          const html = data.cards.length
+                       ? data.cards.map(makeCard).join("")
+                       : '<p class="text-center">目前沒有房間資訊</p>';
+          document.getElementById("cards-container").innerHTML = html;
+        }catch(err){
+          console.error("dashboard 更新失敗：", err);
+        }
+      }
+    
+      refreshBoard();                  // 頁面載入立即跑
+      setInterval(refreshBoard, REFRESH_MS);
+    })();
+    </script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base_afterlogin.html" %}
+{% block content %}
+<div class="container my-5">
+  <div class="card shadow">
+    <div class="card-header bg-success text-white">
+      <h3 class="mb-0">設定裝置 - {{ device.chip_id }}</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          {{ form.device_location.label_tag }}
+          {{ form.device_location }}
+          {% if form.device_location.errors %}
+            <div class="text-danger">{{ form.device_location.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          {{ form.threshold.label_tag }}
+          {{ form.threshold }}
+          {% if form.threshold.errors %}
+            <div class="text-danger">{{ form.threshold.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          {{ form.django_url.label_tag }}
+          {{ form.django_url }}
+          {% if form.django_url.errors %}
+            <div class="text-danger">{{ form.django_url.errors }}</div>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-success">儲存設定</button>
+        <a href="{% url 'device_list' %}" class="btn btn-secondary ml-2">返回列表</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

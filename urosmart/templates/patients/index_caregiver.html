@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <style>
+        h2 {
+            text-align: center;
+            color: #4BBDA6;
+            margin-bottom: 20px;
+            margin-top:20px;
+        }
+        .message {
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    {% if messages %}
+    <div class="alert alert-danger text-center">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="container">
+        <h2>病患 {{ patient_id }} 的累積尿量查詢</h2>
+        <p class="text-center font-weight-bold" >姓名 : <span> {{patient_name}}</span> </p>
+        {% if flag%}
+        <p class="text-center font-weight-bold">現在尿量: {{now.value}} ml</p>
+        <p class="alert alert-warning text-center">狀態 : {{now.status}}</p>
+        {% else%}
+        <p class="text-center font-weight-bold">現在尿量: 0 ml</p>
+        
+        {% endif%}
+        <p>僅顯示最近7日之尿量</p>
+        <table class="table table-bordered ">
+            <thead style="background:#4BBDA6; " class="text-white">
+                <tr>
+                    <th>日期</th>
+                    <th>累積尿量(ml)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in dailyvolumes %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.volume }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">無資料</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="row">
+            <h6 class="bg-warning col-4 col-lg-2">尿袋護理注意事項</h6>
+        </div>
+        <div class="row border border-dark">
+            <ol>
+                <li>倒尿前後需洗手。</li>
+                <li>維持密閉引流系統，避免管子扭曲造成回流，尿袋位置應低於膀胱，以預防尿液逆流造成感染。</li>
+                <li>尿袋應至少每隔8小時傾倒一次，當尿袋內尿量超過1/2時，需馬上傾倒。</li>
+                <li>導尿管與尿袋接頭處應保持密閉，尿袋出口處應隨時關閉，不可碰觸地面或倒尿容器，以避免汙染。</li>
+                <li>協助病人移位或下床時，需先將尿袋內尿液倒乾淨，避免重力牽扯滑落。</li>
+                <li>尿袋不需常規更換，原則上應與導尿管同時更換即可。</li>
+            </ol>
+        </div>
+        
+    </div>
+    
+</body>
+</html>

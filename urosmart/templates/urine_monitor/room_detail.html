@@ -1,0 +1,111 @@
+{% extends "base_afterlogin.html" %}
+
+{% block content %}
+<div class="container my-5">
+    {% if patient %}
+        <h2 class="mb-4">病患 {{ patient }} 當天 Sensor 資料圖表</h2>
+    {% else %}
+        <h2 class="mb-4">當天無資料</h2>
+    {% endif %}
+    
+    <!-- 時間篩選區塊 -->
+    <div class="row mb-4">
+        <div class="col-sm-4">
+            <label for="startTime">開始時間:</label>
+            <input type="time" id="startTime" class="form-control">
+        </div>
+        <div class="col-sm-4">
+            <label for="endTime">結束時間:</label>
+            <input type="time" id="endTime" class="form-control">
+        </div>
+        <div class="col-sm-4 align-self-end">
+            <button id="filterBtn" class="btn btn-primary">篩選</button>
+        </div>
+    </div>
+    
+    <canvas id="sensorChart" width="400" height="200"></canvas>
+</div>
+
+<!-- 引入 Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 從 Django 傳來的資料
+    const originalLabels = [
+        {% for data in sensor_data %}
+            "{{ data.timestamp|date:'H:i' }}",
+        {% endfor %}
+    ];
+    
+    const originalData = [
+        {% for data in sensor_data %}
+            {{ data.value }},
+        {% endfor %}
+    ];
+    
+    // 建立圖表配置與圖表
+    const ctx = document.getElementById('sensorChart').getContext('2d');
+    const config = {
+        type: 'line',
+        data: {
+            labels: originalLabels,
+            datasets: [{
+                label: 'Sensor Value',
+                data: originalData,
+                fill: false,
+                borderColor: '#4BBDA6',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: '時間 (H:i)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: '數值'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    };
+    const sensorChart = new Chart(ctx, config);
+    
+    // 事件處理：點擊篩選按鈕
+    document.getElementById('filterBtn').addEventListener('click', function() {
+        // 取得使用者選取的開始與結束時間
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
+        
+        // 若未選擇完整範圍則不處理
+        if (!startTime || !endTime) {
+            alert("請選擇完整的開始與結束時間！");
+            return;
+        }
+        
+        // 過濾資料：利用時間字串比較（格式皆為 "HH:mm"）
+        const filteredLabels = [];
+        const filteredData = [];
+        
+        originalLabels.forEach((label, index) => {
+            // 比較字串：因格式固定 "HH:mm"，字串比較即可
+            if (label >= startTime && label <= endTime) {
+                filteredLabels.push(label);
+                filteredData.push(originalData[index]);
+            }
+        });
+        
+        // 更新圖表資料並重繪
+        sensorChart.data.labels = filteredLabels;
+        sensorChart.data.datasets[0].data = filteredData;
+        sensorChart.update();
+    });
+</script>
+{% endblock %}

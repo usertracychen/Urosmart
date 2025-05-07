@@ -1,0 +1,27 @@
+{% extends "base_afterlogin.html"%}
+{%block content%}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">確認刪除使用者</h4>
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              您確定要刪除使用者 <strong>{{ user.username }}</strong> 嗎？此操作將無法回復。
+            </p>
+            <form method="POST">
+              {% csrf_token %}
+              <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-danger">確認刪除</button>
+                <a href="{% url 'user_list' %}" class="btn btn-secondary">取消</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{%endblock%}
+

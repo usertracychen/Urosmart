@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-success">使用條款</h2>
+    <hr>
+    <p>使用 UroSmart 系統前，請詳閱以下條款：</p>
+    <ol class="list-group list-group-numbered mb-4">
+        <li class="list-group-item">帳號為個人使用，不可轉讓或外借。</li>
+        <li class="list-group-item">請妥善保管您的登入資訊，避免未經授權存取。</li>
+        <li class="list-group-item">系統可能進行例行維護，屆時部分功能將暫停。</li>
+        <li class="list-group-item">違規行為將可能被停權並依法處理。</li>
+    </ol>
+    <p>若您有任何疑問，請使用 <a href="{% url 'contact_us' %}">聯絡我們</a> 提出。</p>
+</div>
+{% endblock %}

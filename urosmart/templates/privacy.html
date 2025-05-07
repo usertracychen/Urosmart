@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-success">隱私政策</h2>
+    <hr>
+    <p>UroSmart 非常重視您的個人資料保護與隱私安全，以下為我們的隱私政策說明：</p>
+    <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item">1️⃣ 僅收集必要的照護相關資料，不進行不當追蹤。</li>
+        <li class="list-group-item">2️⃣ 所有資料僅限於系統內部用途，絕不外洩。</li>
+        <li class="list-group-item">3️⃣ 資料處理過程遵循醫療隱私及資安標準。</li>
+        <li class="list-group-item">4️⃣ 您可申請查閱、更正、刪除您的資料。</li>
+    </ul>
+    <p>如有隱私相關疑問，歡迎透過 <a href="{% url 'contact_us' %}">聯絡我們</a>。</p>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base_afterlogin.html" %}
+{% comment %} {% load static %} {% endcomment %}
+{% block content %}
+<div class="container my-5">
+    <h2>全部病患即時尿量監測列表</h2>
+    <!-- 將即時資料部分包裝在 id="data-container" 的容器中 -->
+    <div id="data-container">
+        <form method="POST" action="{% url 'weight_display_submit' %}">
+            {% csrf_token %}
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th></th> <!-- 勾選框 -->
+                        <th>病房</th>
+                        <th>病患ID</th>
+                        <th>病患姓名</th>
+                        <th>當下尿量</th>
+                        <th>累積尿量</th>
+                        <th>狀態</th>
+                        <th>更新時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in display_data %}
+                    <tr>
+                        
+                        <td>
+                            {%if item.chip_id.chip_id%}
+                            <input type="checkbox" name="selected_devices" value="{{ item.chip_id.chip_id }}">
+                            {%endif%}
+                        </td>
+                        <td>{{ item.location }}</td>
+                        <td>{{ item.patient }}</td>
+                        <td>{{ item.patient_name }}</td>
+                        <td>{{ item.value }}</td>
+                        <td>{{ item.daily_volume }}</td>
+                        <td>{{ item.status }}</td>
+                        <td>{{ item.timestamp|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">尚無裝置資料</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">送出勾選結果</button>
+        </form>
+    </div>
+</div>
+
+<!-- 自動更新的 JavaScript -->
+<script>
+    // 定義自動更新函式
+    function updateData() {
+        // 在 URL 加入時間戳避免瀏覽器快取
+        fetch("{% url 'weight_display' %}?t=" + Date.now())
+            .then(response => response.text())
+            .then(html => {
+                // 用 DOMParser 將返回的 HTML 解析成文檔
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, "text/html");
+                // 從解析後的文檔中提取 id="data-container" 的內容
+                var newContent = doc.getElementById("data-container").innerHTML;
+                // 更新當前頁面的 data-container
+                document.getElementById("data-container").innerHTML = newContent;
+            })
+            .catch(error => console.error("更新數據錯誤:", error));
+    }
+    // 每隔 10 秒更新一次
+    setInterval(updateData, 10000);
+</script> 
+{% endblock %}

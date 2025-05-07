@@ -1,0 +1,24 @@
+{%extends "base_afterlogin.html"%}
+{%block content%}
+<div class="container mt-4">
+    <h2>設定病房{{lp_record.location}}入院病患</h2>
+    {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="patient_id">請輸入病患病歷號碼</label>
+            <input type="text"class="form-control" id="patient_id" placeholder="病患病歷號" name="patient_id">
+        </div>
+        
+            <button type="submit" class="btn btn-primary">確定入院</button>
+            <a href="{% url 'lp_current_list' %}" class="btn btn-secondary">取消</a>
+        
+    </form>
+</div>
+
+
+{%endblock%}

@@ -1,0 +1,37 @@
+{% extends "base_afterlogin.html" %}
+{% load static %}
+{% block style %}
+  /* 額外微調：讓警示卡片圓角更柔和 */
+  .alert-rounded {
+      border-radius: 1rem;
+  }
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <!-- 警示卡片 -->
+      <div class="alert alert-warning d-flex align-items-start shadow-sm alert-rounded p-4">
+        <i class="bi bi-exclamation-triangle-fill fs-2 me-3"></i>
+        <div>
+          <h4 class="alert-heading mb-2">無法刪除設備</h4>
+          <p class="mb-0">
+            該 Sensor 仍包含歷史資料。<br>
+            請先備份並清除 <code>SensorData</code> 資料表中的相關紀錄，再重新嘗試刪除。
+          </p>
+        </div>
+      </div>
+
+      <!-- 返回按鈕 -->
+      <div class="text-end mt-4">
+        <a href="{% url 'device_list' %}" class="btn btn-secondary px-4">
+          返回清單
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

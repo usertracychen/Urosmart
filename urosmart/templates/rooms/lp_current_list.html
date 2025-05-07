@@ -1,0 +1,64 @@
+<!-- templates/lp_current_list.html -->
+{% extends "base_afterlogin.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>當前病房住院病患列表</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>病房</th>
+                <th>病歷號</th>
+                <th>病患名稱</th>
+                <th>身分證</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lp in lp_records %}
+            <tr>
+                <td>{{ lp.location }}</td>
+                <td>
+                    {% if lp.patient %}
+                        {{ lp.patient_id }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    {% if lp.patient %}
+                        {{ lp.patient.name }}
+                    {% else %}
+                        尚未入院
+                    {% endif %}
+                </td>
+                <td>
+                    {% if lp.patient %}
+                        {{ lp.patient.identity_card }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not lp.patient %}
+                    <a href="{% url 'admit_patient' lp.location %}" class="btn btn-sm btn-primary">入院 </a>
+                    {% endif %}
+                    {% if lp.patient %}
+                        <a href="{% url 'discharge_patient' lp.location %}" class="btn btn-sm btn-danger" onclick="return confirm('確認該病患出院嗎？');">出院</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">尚無病房資料</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base_afterlogin.html" %}
+{% block content %}
+<div class="container my-5">
+    <h2>病患 {{ patient_id }} 的累積尿量查詢</h2>
+    <p>查詢日期：{{ start_date }} ~ {{ end_date }}</p>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+       
+    {% else %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>累積尿量</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in daily_volumes %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.volume }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">無資料</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <a href="{% url "show_history" %}" class="btn btn-success">回上一頁</a>
+</div>
+{% endblock %}

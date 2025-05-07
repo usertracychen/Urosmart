@@ -1,0 +1,57 @@
+{% extends "base_afterlogin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>歷史紀錄查詢</h2>
+    <form method="GET" class="mb-3">
+        <div class="form-row">
+            <div class="col-md-2">
+                <label for="patient_id" class="form-label">輸入病患病歷號</label>
+                <input type="text"class="form-control" id="patient_id" name="patient_id" value="{{ request.GET.patient_id|default_if_none:''}}">
+            </div>
+            <div class="col-md-3">
+                <label>起始日期</label>
+                <input type="date" name="start_date" class="form-control"
+                       value="{{ request.GET.start_date|default_if_none:'' }}">
+            </div>
+            <div class="col-md-3">
+                <label>結束日期</label>
+                <input type="date" name="end_date" class="form-control"
+                       value="{{ request.GET.end_date|default_if_none:'' }}">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">查詢</button>
+                <button type="submit" formaction="{% url 'show_history_daily' %}" class="btn btn-info w-100">每日累積量</button>
+            </div>
+        </div>
+    </form>
+    
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>時間</th>
+                <th>病房</th>
+                <th>病歷號</th>
+                <th>病患</th>
+                <th>尿量</th>
+                <th>狀態</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in query_data %}
+            <tr>
+                <td>{{ row.timestamp }}</td>
+                <td>{{ row.location }}</td>
+                <td>{{ row.patient}}</td>
+                <td>{{ row.patient_name}}</td>
+                <td>{{ row.value }}</td>
+                <td>{{ row.status }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">尚無紀錄</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

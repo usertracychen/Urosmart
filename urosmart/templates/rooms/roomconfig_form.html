@@ -1,0 +1,25 @@
+<!-- templates/roomconfig_form.html -->
+{% extends "base_afterlogin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if roomconfig %}編輯病房設定{% else %}新增病房設定{% endif %}</h2>
+    {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="room_number">病房號碼</label>
+            <input type="text" id="room_number" name="room_number" class="form-control" value="{{ roomconfig.room_number|default:'' }}" {% if roomconfig %}readonly{% endif %}>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" id="is_active" name="is_active" class="form-check-input" {% if roomconfig and roomconfig.is_active %}checked{% endif %}>
+            <label for="is_active" class="form-check-label">顯示此病房</label>
+        </div>
+        <button type="submit" class="btn btn-primary">儲存</button>
+        <a href="{% url 'roomconfig_list' %}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}
